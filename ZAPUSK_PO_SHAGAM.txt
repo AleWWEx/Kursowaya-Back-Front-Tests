@@ -41,8 +41,8 @@
 Шаг A3b. Только если работаете С PostgreSQL (одна сессия PowerShell):
 
   $env:POSTGRES_DB = "hair_salon_db"
-  $env:POSTGRES_USER = "postgres"
-  $env:POSTGRES_PASSWORD = "postgres"
+  $env:POSTGRES_USER = "Alex"
+  $env:POSTGRES_PASSWORD = "AleWWEx54153!"
   $env:POSTGRES_HOST = "127.0.0.1"
   $env:POSTGRES_PORT = "5432"
 
