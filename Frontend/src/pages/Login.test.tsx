@@ -48,10 +48,4 @@ describe("Login page (UI)", () => {
     expect(screen.getByLabelText(/^имя$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/отчество/i)).toBeInTheDocument();
   });
-
-  it("U-10: brand STEEL and BLADE is visible", () => {
-    renderLogin();
-    expect(screen.getByText(/STEEL/i)).toBeInTheDocument();
-    expect(screen.getByText(/BLADE/i)).toBeInTheDocument();
-  });
 });

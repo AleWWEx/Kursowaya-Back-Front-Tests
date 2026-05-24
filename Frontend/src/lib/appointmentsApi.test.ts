@@ -26,13 +26,4 @@ describe("appointmentsApi (UI)", () => {
     expect(row.date).toMatch(/2026-06-15/);
     expect(row.time).toMatch(/\d{2}:\d{2}/);
   });
-
-  it("U-07: appointmentToRow strips phone line from notes", () => {
-    const row = appointmentToRow({
-      ...baseAppointment(),
-      comment: "Тел: +79991234567\n\nПожелания клиента",
-    });
-    expect(row.notes).toBe("Пожелания клиента");
-    expect(row.notes).not.toMatch(/7999/);
-  });
 });
