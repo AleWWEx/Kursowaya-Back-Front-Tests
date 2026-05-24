@@ -94,12 +94,39 @@ def main() -> int:
         ("U-02", "UI", "Валидация email (невалид)", "formValidation.validateEmail", "строка без @", "Сообщение об ошибке формата", "", ""),
         ("U-03", "UI", "Валидация пароля", "formValidation.validatePassword", "Пароль 5 символов", "Сообщение «не короче 8»", "", ""),
         ("U-04", "UI", "Дата записи в прошлом", "validateAppointmentStartInFuture", "Дата на неделю назад, isEdit=false", "Сообщение о необходимости будущего времени", "", ""),
-        ("U-05", "UI", "Утилита cn / twMerge", "lib/utils.cn", "Классы p-2 и p-4", "Итог p-4", "", ""),
+        (
+            "U-05",
+            "UI",
+            "Создание записи клиентом",
+            "BookingForm.tsx",
+            "Выбор услуги, мастера, даты и времени в будущем, кнопка «Создать запись»",
+            "POST /api/appointments/ с master_id, service_id, start_datetime",
+            "",
+            "",
+        ),
         ("U-06", "UI", "appointmentToRow: основные поля", "appointmentsApi", "JSON записи с клиентом, услугой, статусом", "Корректные clientName, service, price, status", "", ""),
-        ("U-07", "UI", "appointmentToRow: телефон из comment", "appointmentsApi", "comment с строкой «Тел: …»", "clientPhone извлечён", "", ""),
+        (
+            "U-07",
+            "UI",
+            "Кабинет мастера: список записей",
+            "Dashboard.tsx",
+            "Роль master, загружен список записей",
+            "В таблице видны клиент, услуга и колонка «Прогноз ИИ»",
+            "",
+            "",
+        ),
         ("U-08", "UI", "Страница Login: поля", "Login.tsx", "Рендер компонента", "Видны Email, Пароль, кнопка «Войти»", "", ""),
         ("U-09", "UI", "Login: режим регистрации", "Login.tsx", "Переключение на регистрацию", "Поля Фамилия, Имя, Отчество", "", ""),
-        ("U-10", "UI", "Login: бренд", "Login.tsx", "Заголовок окна", "Отображается STEEL / BLADE", "", ""),
+        (
+            "U-10",
+            "UI",
+            "Кабинет мастера: AI-риск",
+            "Dashboard.tsx",
+            "Запись с aiRiskColor=yellow, aiProbability=25",
+            "Метка риска «Средний» и значение «25%» в строке записи",
+            "",
+            "",
+        ),
     ]
     # --- БП (5) ---
     bp = [
@@ -140,5 +167,66 @@ def main() -> int:
     return 0
 
 
+# Строки UI-таблицы (5 колонок) в «Структура таблицы тестов.docx»: (проверка, ожидаемый, фактический, статус)
+UI_REPORT_ROWS: dict[int, tuple[str, str, str, str]] = {
+    5: (
+        "Создание записи клиентом через форму «Новая запись»",
+        "После заполнения услуги, мастера, даты и времени отправляется POST /api/appointments/ с корректным телом",
+        "Клиент выбрал справочники и дату в будущем; POST содержит master_id, service_id и start_datetime",
+        "Пройден",
+    ),
+    7: (
+        "Кабинет мастера: отображение списка записей в таблице",
+        "В таблице видны клиент, услуга и колонка «Прогноз ИИ»",
+        "Для роли master в DOM отображаются данные записи и заголовок прогноза",
+        "Пройден",
+    ),
+    10: (
+        "Кабинет мастера: отображение уровня AI-риска и вероятности неявки",
+        "Для записи с aiRiskColor и aiProbability показаны метка риска (например «Средний») и процент",
+        "В строке записи отображаются «Средний» и «25%» для тестовых данных",
+        "Пройден",
+    ),
+}
+
+
+def update_structure_report_ui() -> int:
+    """Обновляет UI-таблицу (вторая таблица) в «Структура таблицы тестов.docx»."""
+    if not DOCX.is_file():
+        print(f"Нет файла: {DOCX}", file=sys.stderr)
+        return 1
+
+    doc = Document(str(DOCX))
+    if len(doc.tables) < 2:
+        print("В документе нет второй таблицы (UI).", file=sys.stderr)
+        return 1
+
+    table = doc.tables[1]
+    for row_idx, (check, expected, actual, status) in UI_REPORT_ROWS.items():
+        if row_idx >= len(table.rows):
+            print(f"Строка {row_idx} отсутствует в UI-таблице.", file=sys.stderr)
+            return 1
+        cells = table.rows[row_idx].cells
+        set_cell_text(cells[1], check)
+        set_cell_text(cells[2], expected)
+        set_cell_text(cells[3], actual)
+        set_cell_text(cells[4], status)
+
+    doc.save(str(DOCX))
+    print("Обновлено:", DOCX)
+    return 0
+
+
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--update-ui-report",
+        action="store_true",
+        help="Обновить только UI-таблицу в «Структура таблицы тестов.docx»",
+    )
+    args = parser.parse_args()
+    if args.update_ui_report:
+        raise SystemExit(update_structure_report_ui())
     raise SystemExit(main())
