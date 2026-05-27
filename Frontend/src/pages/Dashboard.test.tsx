@@ -71,7 +71,7 @@ describe("Dashboard (UI)", () => {
     fetchAppointmentsMock.mockReset();
   });
 
-  it("U-07: master cabinet displays appointments in the list", async () => {
+  it("U-07: Список записей в кабинете мастера", async () => {
     fetchAppointmentsMock.mockResolvedValue([sampleBooking]);
     renderDashboard();
 
@@ -82,7 +82,7 @@ describe("Dashboard (UI)", () => {
     expect(screen.getByRole("columnheader", { name: /прогноз ии/i })).toBeInTheDocument();
   });
 
-  it("U-10: master sees AI risk label and probability for a booking", async () => {
+  it("U-10: Уровень AI-риска и вероятность неявки", async () => {
     fetchAppointmentsMock.mockResolvedValue([
       { ...sampleBooking, aiRiskColor: "yellow", aiProbability: 25 },
     ]);

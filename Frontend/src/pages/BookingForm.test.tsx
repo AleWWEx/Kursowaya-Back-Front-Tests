@@ -68,7 +68,7 @@ describe("BookingForm (UI)", () => {
     });
   });
 
-  it("U-05: client creates appointment through booking form", async () => {
+  it("U-05: Создание записи клиентом", async () => {
     renderBookingForm();
 
     await waitFor(() => {
